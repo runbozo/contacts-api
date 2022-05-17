@@ -8,10 +8,10 @@ from app import db
 from app.utils import response_handler
 
 
-bp = Blueprint('api', __name__, url_prefix='/api')
+bp = Blueprint('api', __name__, url_prefix='/api/contacts')
 
 
-@bp.route("/contacts", methods=["POST"])
+@bp.route("/", methods=["POST"])
 @validate()
 def add_contact(body: ContactBodyModel):
     if Contact.query.filter(Contact.email == body.email).first():
@@ -31,7 +31,7 @@ def add_contact(body: ContactBodyModel):
     return response_handler(f"Contact with email {body.email} sucessfully added to contacts", 200)
 
 
-@bp.route("/contacts", methods=["GET"])
+@bp.route("/", methods=["GET"])
 def list_contacts():
     contact_list = []
 
@@ -51,7 +51,7 @@ def list_contacts():
     return json.dumps(contact_list)
 
 
-@bp.route("/contacts/<contact_id>", methods=["GET"])
+@bp.route("/<contact_id>", methods=["GET"])
 def get_contact(contact_id):
     contact = Contact.query.get_or_404(contact_id)
 
@@ -68,7 +68,7 @@ def get_contact(contact_id):
     return c.dict()
 
 
-@bp.route("/contacts/<contact_id>", methods=["DELETE"])
+@bp.route("/<contact_id>", methods=["DELETE"])
 def delete_contact(contact_id):
     if not Contact.query.filter(Contact.id == contact_id).first():
         return response_handler(f"Contact with id {contact_id} not found", 404)
@@ -78,7 +78,7 @@ def delete_contact(contact_id):
     return response_handler(f"Contact with id {contact_id} succesfully deleted", 200)
 
 
-@bp.route("/contacts/<contact_id>", methods=["PUT"])
+@bp.route("/<contact_id>", methods=["PUT"])
 def update_contact(contact_id):
     contact = Contact.query.filter(Contact.id == contact_id).first()
 
@@ -94,7 +94,7 @@ def update_contact(contact_id):
     return response_handler("Contact succesfully updated", 200)
 
 
-@bp.route("/contacts/delete_all", methods=["DELETE"])
+@bp.route("/delete_all", methods=["DELETE"])
 def delete_all():
     """
     Метод вне требований, предназначен для упрощения отладки
