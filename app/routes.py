@@ -28,7 +28,7 @@ def add_contact(body: ContactBodyModel):
     )
     db.session.add(c)
     db.session.commit()
-    return response_handler(f"Contact with email {body.email} sucessfully added to contacts", 200)
+    return response_handler(f"Contact with id {c.id} successfully added to contacts", 200)
 
 
 @bp.route("/", methods=["GET"])
@@ -91,7 +91,7 @@ def update_contact(contact_id):
 
     contact.update(**params_for_update)
     db.session.commit()
-    return response_handler("Contact succesfully updated", 200)
+    return response_handler("Contact succcesfully updated", 200)
 
 
 @bp.route("/delete_all", methods=["DELETE"])
