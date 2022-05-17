@@ -28,7 +28,7 @@ def add_contact(body: ContactBodyModel):
     )
     db.session.add(c)
     db.session.commit()
-    return response_handler(f"Contact with id {c.id} successfully added to contacts", 200)
+    return c.as_dict()
 
 
 @bp.route("/", methods=["GET"])
@@ -37,35 +37,15 @@ def list_contacts():
 
     contacts = Contact.query.all()
     for contact in contacts:
-        c = ContactBodyModel(
-            id=contact.id,
-            email=contact.email,
-            first_name=contact.first_name,
-            last_name=contact.last_name,
-            phone=contact.phone,
-            country=contact.country,
-            city=contact.city,
-            address=contact.address,
-        )
-        contact_list.append(c.dict())
+        c = contact.as_dict()
+        contact_list.append(c)
     return json.dumps(contact_list)
 
 
 @bp.route("/<contact_id>", methods=["GET"])
 def get_contact(contact_id):
     contact = Contact.query.get_or_404(contact_id)
-
-    c = ContactBodyModel(
-            id=contact.id,
-            email=contact.email,
-            first_name=contact.first_name,
-            last_name=contact.last_name,
-            phone=contact.phone,
-            country=contact.country,
-            city=contact.city,
-            address=contact.address,
-        )
-    return c.dict()
+    return contact.as_dict()
 
 
 @bp.route("/<contact_id>", methods=["DELETE"])
@@ -81,6 +61,9 @@ def delete_contact(contact_id):
 @bp.route("/<contact_id>", methods=["PUT"])
 def update_contact(contact_id):
     contact = Contact.query.filter(Contact.id == contact_id).first()
+
+    if not contact:
+        return response_handler(f"Contact with id {contact_id} not found", 404)
 
     data = request.json
     params_for_update = {}
