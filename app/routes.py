@@ -66,6 +66,10 @@ def update_contact(contact_id):
         return response_handler(f"Contact with id {contact_id} not found", 404)
 
     data = request.json
+    
+    if data.get("email") and Contact.query.filter(Contact.email == data.get("email"), Contact.id != contact_id).first():
+        return response_handler(f"Contact with email {contact.email} already exists", 400)
+    
     params_for_update = {}
 
     for col_name in data.keys():
